@@ -1,0 +1,44 @@
+name: Gin API CI/CD
+on:
+  push:
+    branch[main]
+  pul_request:
+    branch[main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: '**/go.sum'
+  
+      - run: go mod tidy && git diff --exit-code
+      - run: go vet ./...
+      - run: go test -race -shuffle=on -coverprofile=coverage.out ./...
+      - run: go build ./...
+
+      - name: Upload Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.out
+
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          args: --timeout=5m
