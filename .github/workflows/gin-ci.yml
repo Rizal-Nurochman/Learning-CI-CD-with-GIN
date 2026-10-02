@@ -1,9 +1,9 @@
 name: Gin API CI/CD
 on:
   push:
-    branch[main]
-  pul_request:
-    branch[main]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
