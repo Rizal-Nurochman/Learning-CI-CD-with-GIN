@@ -15,9 +15,10 @@ func GetAll(ctx *gin.Context)  {
 	books, err := service.GetAll()
 	if err != nil {
 		ctx.JSON(500, gin.H{
-			"message": err,
+			"message": err.Error(),
 			"data": nil,
 		})
+		return
 	}
 
 	ctx.JSON(200, gin.H{
